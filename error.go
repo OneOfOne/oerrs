@@ -8,7 +8,8 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func NoCaller(text string) error {
+// Error returns a plain text error
+func Error(text string) error {
 	s := stringError(text)
 	return &s
 }
