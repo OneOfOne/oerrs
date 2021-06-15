@@ -8,20 +8,37 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// New returns an error that formats as the given text.
-//
-// The returned error contains a Frame set to the caller's location and
-// implements Formatter to show this information when printed with details.
-func New(text string, withJSON bool) error {
-	return NewSkipCaller(text, withJSON, 1)
+func NoCaller(text string) error {
+	s := stringError(text)
+	return &s
 }
 
-// NewSkipCaller returns an error that formats as the given text.
-// and skips X frames.
-// The returned error contains a Frame set to the caller's location and
-// implements Formatter to show this information when printed with details.
-func NewSkipCaller(text string, withJSON bool, skip int) error {
-	return WrapSkipCaller(stringError(text), withJSON, skip+1)
+func WithCaller(v interface{}, withJSON bool) error {
+	return WithCallerSkip(v, withJSON, 1)
+}
+
+func WithCallerSkip(v interface{}, withJSON bool, skip int) error {
+	if v == nil {
+		return nil
+	}
+	var err error
+	switch v := v.(type) {
+	case string:
+		s := stringError(v)
+		err = &s
+	case error:
+		err = v
+	default:
+		s := stringError(fmt.Sprintf("%v", v))
+		err = &s
+	}
+
+	werr := wrappedError{err, Caller(skip + 1)}
+	if withJSON {
+		return &jsonError{wrappedError: werr}
+	}
+
+	return &werr
 }
 
 func Wrap(err error, withJSON bool) error {
@@ -38,7 +55,7 @@ func WrapSkipCaller(err error, withJSON bool, skip int) error {
 
 type stringError string
 
-func (e stringError) Error() string { return string(e) }
+func (e *stringError) Error() string { return string(*e) }
 
 // wrappedError is a trivial implementation of error with frame information
 type wrappedError struct {
