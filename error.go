@@ -9,9 +9,9 @@ import (
 )
 
 // Error returns a plain text error
+// errors returned can be cast to string, ymmv.
 func Error(text string) error {
-	s := stringError(text)
-	return &s
+	return stringError(text)
 }
 
 func WithCaller(v interface{}, withJSON bool) error {
@@ -25,13 +25,11 @@ func WithCallerSkip(v interface{}, withJSON bool, skip int) error {
 	var err error
 	switch v := v.(type) {
 	case string:
-		s := stringError(v)
-		err = &s
+		err = stringError(v)
 	case error:
 		err = v
 	default:
-		s := stringError(fmt.Sprintf("%v", v))
-		err = &s
+		err = stringError(fmt.Sprintf("%v", v))
 	}
 
 	werr := wrappedError{err, Caller(skip + 1)}
@@ -56,7 +54,7 @@ func WrapSkipCaller(err error, withJSON bool, skip int) error {
 
 type stringError string
 
-func (e *stringError) Error() string { return string(*e) }
+func (e stringError) Error() string { return string(e) }
 
 // wrappedError is a trivial implementation of error with frame information
 type wrappedError struct {
