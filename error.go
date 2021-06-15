@@ -8,12 +8,6 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// Error returns a plain text error
-// errors returned can be cast to string, ymmv.
-func Error(text string) error {
-	return stringError(text)
-}
-
 func WithCaller(v interface{}, withJSON bool) error {
 	return WithCallerSkip(v, withJSON, 1)
 }
@@ -25,11 +19,11 @@ func WithCallerSkip(v interface{}, withJSON bool, skip int) error {
 	var err error
 	switch v := v.(type) {
 	case string:
-		err = stringError(v)
+		err = String(v)
 	case error:
 		err = v
 	default:
-		err = stringError(fmt.Sprintf("%v", v))
+		err = String(fmt.Sprintf("%v", v))
 	}
 
 	werr := wrappedError{err, Caller(skip + 1)}
@@ -52,9 +46,10 @@ func WrapSkipCaller(err error, withJSON bool, skip int) error {
 	return &werr
 }
 
-type stringError string
+// String is a plain string error, it can be converted to string and compared
+type String string
 
-func (e stringError) Error() string { return string(e) }
+func (e String) Error() string { return string(e) }
 
 // wrappedError is a trivial implementation of error with frame information
 type wrappedError struct {
