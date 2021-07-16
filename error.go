@@ -3,7 +3,6 @@ package oerrs
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"golang.org/x/xerrors"
 )
@@ -58,7 +57,6 @@ type wrappedError struct {
 }
 
 func (e *wrappedError) Error() string {
-	log.Printf("%#+v", e.s)
 	return e.s.Error()
 }
 
@@ -81,7 +79,7 @@ type jsonError struct {
 
 func (e *jsonError) MarshalJSON() ([]byte, error) {
 	type jsonError_ jsonError
-	if e.wrappedError.s == nil && e.Msg != "" {
+	if e.s == nil && e.Msg != "" {
 		return json.Marshal((*jsonError_)(e))
 	}
 	je := &jsonError_{
