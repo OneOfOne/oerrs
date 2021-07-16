@@ -1,7 +1,7 @@
 # oerrs
 
 [![Go Reference](https://pkg.go.dev/badge/go.oneofone.dev/oerrs.svg)](https://pkg.go.dev/go.oneofone.dev/oerrs)
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/go.oneofone.dev/oerrs)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/OneOfOne/oerrs)
 
 [godocs]: https://pkg.go.dev/go.oneofone.dev/oerrs
 
