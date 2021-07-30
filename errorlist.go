@@ -89,6 +89,15 @@ func (e *ErrorList) PushIfSkipCaller(err error, skip int) bool {
 	return true
 }
 
+func (e *ErrorList) Reset() {
+	if e == nil {
+		return
+	}
+
+	defer e.lock(true)()
+	e.errs = nil
+}
+
 func (e *ErrorList) Err() error {
 	if e == nil {
 		return nil
