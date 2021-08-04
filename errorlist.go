@@ -81,10 +81,7 @@ func (e *ErrorList) PushIfSkipCaller(err error, skip int) bool {
 		}
 	}
 
-	if e.saveCaller {
-		err = WrapSkipCaller(err, e.jsonExport, skip+1)
-	}
-
+	err = WrapSkipCaller(err, e.jsonExport, skip+1)
 	e.errs = append(e.errs, err)
 	return true
 }
@@ -105,13 +102,7 @@ func (e *ErrorList) Err() error {
 
 	defer e.lock(false)()
 
-	nilCount := 0
-	for _, err := range e.errs {
-		if err == nil {
-			nilCount++
-		}
-	}
-	if nilCount == len(e.errs) {
+	if len(e.errs) == 0 {
 		return nil
 	}
 	return e
@@ -189,7 +180,7 @@ func (e *ErrorList) Errors() []error {
 func (e *ErrorList) MarshalJSON() ([]byte, error) {
 	defer e.lock(false)()
 	if e == nil || !e.jsonExport || len(e.errs) == 0 {
-		return []byte("nil"), nil
+		return []byte("null"), nil
 	}
 	var buf bytes.Buffer
 	buf.WriteByte('[')
