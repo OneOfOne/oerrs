@@ -49,11 +49,17 @@ func WrapSkipCaller(err error, withJSON bool, skip int) error {
 type String string
 
 func (e String) Error() string { return string(e) }
+func (e String) WithCaller(skip int) error {
+	return &wrappedError{
+		s:  e,
+		fr: Caller(skip + 1),
+	}
+}
 
 // wrappedError is a trivial implementation of error with frame information
 type wrappedError struct {
-	s     error
-	frame *Frame
+	s  error
+	fr *Frame
 }
 
 func (e *wrappedError) Error() string {
@@ -64,7 +70,7 @@ func (e *wrappedError) Format(s fmt.State, v rune) { xerrors.FormatError(e, s, v
 
 func (e *wrappedError) FormatError(p Printer) (next error) {
 	p.Print(e.s)
-	e.frame.Format(p)
+	e.fr.Format(p)
 	return nil
 }
 
@@ -85,6 +91,6 @@ func (e *jsonError) MarshalJSON() ([]byte, error) {
 	je := &jsonError_{
 		Msg: e.Error(),
 	}
-	je.Func, je.File, je.Line = e.frame.Location()
+	je.Func, je.File, je.Line = e.fr.Location()
 	return json.Marshal(je)
 }

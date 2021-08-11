@@ -192,8 +192,8 @@ func (e *ErrorList) MarshalJSON() ([]byte, error) {
 			Msg: err.Error(),
 		}
 		if e.jsonCallers {
-			if err, ok := err.(*wrappedError); ok && err.frame != nil {
-				je.Func, je.File, je.Line = err.frame.Location()
+			if err, ok := err.(*wrappedError); ok && err.fr != nil {
+				je.Func, je.File, je.Line = err.fr.Location()
 			}
 		}
 		if i > 0 {
