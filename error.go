@@ -56,6 +56,10 @@ func (e String) WithCaller(skip int) error {
 	}
 }
 
+func (e String) Is(o error) bool {
+	return e.Error() == string(e)
+}
+
 // wrappedError is a trivial implementation of error with frame information
 type wrappedError struct {
 	s  error
@@ -64,6 +68,13 @@ type wrappedError struct {
 
 func (e *wrappedError) Error() string {
 	return e.s.Error()
+}
+
+func (e *wrappedError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.s
 }
 
 func (e *wrappedError) Format(s fmt.State, v rune) { xerrors.FormatError(e, s, v) }
