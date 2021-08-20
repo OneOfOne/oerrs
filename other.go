@@ -1,6 +1,12 @@
 package oerrs
 
-import "golang.org/x/xerrors"
+import (
+	"fmt"
+
+	"golang.org/x/xerrors"
+)
+
+var AlwaysWithCaller = true
 
 // type aliases from xerrors
 type (
@@ -39,7 +45,21 @@ func Opaque(err error) error {
 	return xerrors.Opaque(err)
 }
 
-// Errorf is an alias to xerrors.Errorf
-func Errorf(format string, a ...interface{}) error {
-	return xerrors.Errorf(format, a...)
+func Errorf(format string, args ...interface{}) error {
+	if AlwaysWithCaller {
+		return ErrorCallerf(1, format, args...)
+	}
+	return fmterrorf(format, args...)
+}
+
+func ErrorCallerf(skip int, format string, args ...interface{}) error {
+	err := fmterrorf(format, args...)
+	return &wrappedError{err, Caller(skip + 1)}
+}
+
+func fmterrorf(format string, args ...interface{}) error {
+	if len(args) == 0 {
+		return String(format)
+	}
+	return fmt.Errorf(format, args...)
 }
