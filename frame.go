@@ -51,7 +51,7 @@ func (fr *Frame) Location() (function, file string, line int) {
 
 func (f *Frame) String() string {
 	function, file, line := f.Location()
-	return fmt.Sprintf("%s @ %s:%d", function, file, line)
+	return fmt.Sprintf("%s:%d [%s]", file, line, function)
 }
 
 // Format prints the stack as error detail.

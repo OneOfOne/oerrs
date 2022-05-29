@@ -13,10 +13,9 @@ Adds an ErrorList with optional stack traces.
 
 Install using `go get go.oneofone.dev/oerrs`.
 
-Package documentation: https://pkg.go.dev/go.oneofone.dev/oerrs
+Package documentation: <https://pkg.go.dev/go.oneofone.dev/oerrs>
 
-### Requires go version 1.15 or newer
-
+### Requires go version 1.18 or newer
 
 ## Features
 
@@ -24,6 +23,7 @@ Package documentation: https://pkg.go.dev/go.oneofone.dev/oerrs
 * A complete drop-in replacement for `xerrors`
 * `ErrorList` handles multiple errors in a sane way.
 * `ErrorList` can optionally be toggled to enable thread safety.
+* `Try/Catch` *needs doc*.
 * All errors can support be toggled to support JSON output.
 
 ## Usage
