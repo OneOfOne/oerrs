@@ -19,11 +19,11 @@ func NewSafeList(includeCallers bool) *ErrorList {
 }
 
 type ErrorList struct {
-	errs []error
 	mux  *sync.RWMutex
+	errs []error
 }
 
-func (e *ErrorList) ThreadSafe() {
+func (e *ErrorList) Safe() {
 	if e.mux != nil {
 		panic("race")
 	}
@@ -31,10 +31,10 @@ func (e *ErrorList) ThreadSafe() {
 }
 
 func (e *ErrorList) Errorf(format string, args ...interface{}) {
-	err := fmt.Errorf(format, args...)
+	err := Errorf(format, args...)
 	defer e.lock(true)()
 	if AlwaysWithCaller {
-		err = &wrappedError{err, Caller(1)}
+		err = &wrapped{err, Caller(1)}
 	}
 	e.errs = append(e.errs, err)
 }
@@ -50,7 +50,7 @@ func (e *ErrorList) PushIf(err error) bool {
 		return false
 	}
 	if AlwaysWithCaller {
-		err = &wrappedError{err, Caller(1)}
+		err = &wrapped{err, Caller(1)}
 	}
 	defer e.lock(true)()
 	e.errs = append(e.errs, err)
@@ -62,7 +62,7 @@ func (e *ErrorList) PushCallerIf(err error, skip int) bool {
 		return false
 	}
 
-	err = &wrappedError{err, Caller(skip + 1)}
+	err = &wrapped{err, Caller(skip + 1)}
 	defer e.lock(true)()
 	e.errs = append(e.errs, err)
 	return true

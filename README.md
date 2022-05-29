@@ -5,7 +5,7 @@
 
 [godocs]: https://pkg.go.dev/go.oneofone.dev/oerrs
 
-`oerrs` is a package for Go that builds on top of [`golang.org/x/xerrors`](https://golang.org/x/xerrors)
+`oerrs` is a package for Go that builds on top of [`golang.org/x/xerrors`](https://golang.org/x/xerrors).
 
 Adds an ErrorList with optional stack traces.
 
@@ -21,6 +21,7 @@ Package documentation: <https://pkg.go.dev/go.oneofone.dev/oerrs>
 
 * Passes through most [`golang.org/x/xerrors`](https://golang.org/x/xerrors) functions and interfaces to make life easier.
 * A complete drop-in replacement for `xerrors`
+* A complete drop-in replacement for `errgroup`
 * `ErrorList` handles multiple errors in a sane way.
 * `ErrorList` can optionally be toggled to enable thread safety.
 * `Try/Catch` *needs doc*.
@@ -30,13 +31,10 @@ Package documentation: <https://pkg.go.dev/go.oneofone.dev/oerrs>
 
 `oerrs` was made to make error handling easier
 
-**Example**
+## Examples
 
 ```go
 var errs oerrs.ErrorList
-
-// if you want know the caller:
-errs.RecorderCaller = true
 
 errs.PushIf(step1())
 errs.PushIf(step2())
@@ -45,8 +43,7 @@ if errs.PushIf(step3()) {
 }
 return errs.Err()
 
-
-**Accessing the list of errors**
+```
 
 `oerrs.ErrorList` implements `error`
 
@@ -62,8 +59,27 @@ if err := something(); err != nil {
 		// use el.Errors
 	}
 }
+
+
+```
+
+```go
+// try / catch
+
+func doStuff() (res Response, err error) {
+	defer oerrs.Catch(&err, nil)
+
+	a := Try1(someFunThatReturnValAndErr())
+	// do something with a
+	b := Try1(someOtherFunc(a))
+
+	return a + b, nil
+}
+
 ```
 
 ## License
+
+The code of errgroup is mostly copied from  [`golang.org/x/sync`](https://golang.org/x/sync) for personal convience, all rights reserved to go devs.
 
 MIT

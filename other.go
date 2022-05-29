@@ -46,6 +46,16 @@ func Opaque(err error) error {
 	return xerrors.Opaque(err)
 }
 
+func Unframe(err error) *Frame {
+	for err != nil {
+		if fr, ok := err.(Framer); ok {
+			return fr.Frame()
+		}
+		err = Unwrap(err)
+	}
+	return nil
+}
+
 func Errorf(format string, args ...interface{}) error {
 	if AlwaysWithCaller {
 		return ErrorCallerf(1, format, args...)
@@ -55,7 +65,7 @@ func Errorf(format string, args ...interface{}) error {
 
 func ErrorCallerf(skip int, format string, args ...interface{}) error {
 	err := fmterrorf(format, args...)
-	return &wrappedError{err, Caller(skip + 1)}
+	return &wrapped{err, Caller(skip + 1)}
 }
 
 func fmterrorf(format string, args ...interface{}) error {

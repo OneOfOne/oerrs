@@ -1,7 +1,7 @@
 package oerrs
 
 type tryErr struct {
-	*wrappedError
+	*wrapped
 }
 
 var CatchAll func(err error, fr *Frame)
@@ -57,6 +57,6 @@ func checkErr(err error) {
 	if err != nil {
 		c := Caller(3)
 		c.trim = true
-		panic(tryErr{&wrappedError{err, c}})
+		panic(tryErr{&wrapped{err, c}})
 	}
 }
