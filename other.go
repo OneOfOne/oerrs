@@ -7,7 +7,10 @@ import (
 	"golang.org/x/xerrors"
 )
 
-var AlwaysWithCaller = true
+var (
+	AlwaysWithCaller                  = true
+	WrappedErrorTextIncludesFrameInfo = false
+)
 
 // type aliases from xerrors
 type (
@@ -46,14 +49,14 @@ func Opaque(err error) error {
 	return xerrors.Opaque(err)
 }
 
-func Unframe(err error) *Frame {
+func Unframe(err error) (*Frame, error) {
 	for err != nil {
 		if fr, ok := err.(Framer); ok {
-			return fr.Frame()
+			return fr.Frame(), err
 		}
 		err = Unwrap(err)
 	}
-	return nil
+	return nil, nil
 }
 
 func Errorf(format string, args ...interface{}) error {

@@ -63,12 +63,5 @@ func (f *Frame) Format(p Printer) {
 	}
 
 	function, file, line := f.Location()
-	if function != "" {
-		p.Printf("%s @ ", function)
-	}
-	if file != "" {
-		p.Printf("%s:%d\n", file, line)
-	} else {
-		p.Print("n/a")
-	}
+	p.Printf("- %s:%d [%s]", file, line, function)
 }

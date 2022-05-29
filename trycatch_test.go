@@ -2,10 +2,12 @@ package oerrs
 
 import (
 	"fmt"
+	"log"
 	"testing"
 )
 
 func maybeerror(err bool) error {
+	log.Printf("%+v", New("x"))
 	if err {
 		return fmt.Errorf("error: %v", err)
 	}

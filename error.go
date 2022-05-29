@@ -3,9 +3,9 @@ package oerrs
 import (
 	"encoding/json"
 	"fmt"
-)
 
-var WrappedErrorTextIncludesFrameInfo = true
+	"golang.org/x/xerrors"
+)
 
 func New(s string) error {
 	err := String(s)
@@ -46,6 +46,14 @@ func (e *wrapped) Error() string {
 
 func (e *wrapped) Unwrap() error {
 	return e.err
+}
+
+func (e *wrapped) Format(s fmt.State, v rune) { xerrors.FormatError(e, s, v) }
+
+func (e *wrapped) FormatError(p Printer) (next error) {
+	p.Print(e.err)
+	e.fr.Format(p)
+	return nil
 }
 
 func (e *wrapped) Is(target error) bool {
