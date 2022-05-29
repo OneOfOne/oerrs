@@ -1,6 +1,7 @@
 package oerrs
 
 import (
+	"fmt"
 	"runtime"
 	"strings"
 )
@@ -46,6 +47,11 @@ func (fr *Frame) Location() (function, file string, line int) {
 		}
 	}
 	return fn, fr.File, fr.Line
+}
+
+func (f *Frame) String() string {
+	function, file, line := f.Location()
+	return fmt.Sprintf("%s @ %s:%d", function, file, line)
 }
 
 // Format prints the stack as error detail.

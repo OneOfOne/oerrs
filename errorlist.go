@@ -1,11 +1,10 @@
 package oerrs
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
-
-	"golang.org/x/xerrors"
 )
 
 func NewList() *ErrorList {
@@ -122,7 +121,7 @@ func (e *ErrorList) As(target interface{}) bool {
 	}
 
 	for _, err := range e.errs {
-		if xerrors.As(err, target) {
+		if errors.As(err, target) {
 			return true
 		}
 	}

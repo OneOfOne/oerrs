@@ -1,6 +1,7 @@
 package oerrs
 
 import (
+	"errors"
 	"fmt"
 
 	"golang.org/x/xerrors"
@@ -25,19 +26,19 @@ type HasAs interface {
 	As(interface{}) bool
 }
 
-// As is an alias to xerrors.As
+// As is an alias to errors.As
 func As(err error, target interface{}) bool {
-	return xerrors.As(err, target)
+	return errors.As(err, target)
 }
 
-// Is is an alias to xerrors.Is
+// Is is an alias to errors.Is
 func Is(err, target error) bool {
-	return xerrors.Is(err, target)
+	return errors.Is(err, target)
 }
 
-// Unwrap is an alias to xerrors.Unwrap
+// Unwrap is an alias to errors.Unwrap
 func Unwrap(err error) error {
-	return xerrors.Unwrap(err)
+	return errors.Unwrap(err)
 }
 
 // Opaque is an alias to xerrors.Opaque
