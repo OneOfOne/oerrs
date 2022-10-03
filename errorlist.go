@@ -50,7 +50,7 @@ func (e *ErrorList) PushIf(err error) bool {
 		return false
 	}
 	if AlwaysWithCaller {
-		err = &wrapped{err, Caller(1)}
+		err = &wrapped{err, Caller(2)}
 	}
 	defer e.lock(true)()
 	e.errs = append(e.errs, err)

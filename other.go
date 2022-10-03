@@ -77,3 +77,24 @@ func fmterrorf(format string, args ...interface{}) error {
 	}
 	return fmt.Errorf(format, args...)
 }
+
+func Join(errs ...error) error {
+	n := 0
+	for _, err := range errs {
+		if err != nil {
+			n++
+		}
+	}
+	if n == 0 {
+		return nil
+	}
+	e := &ErrorList{
+		errs: make([]error, 0, n),
+	}
+	for _, err := range errs {
+		if err != nil {
+			e.errs = append(e.errs, err)
+		}
+	}
+	return e
+}
