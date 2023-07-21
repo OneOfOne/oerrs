@@ -7,7 +7,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func New(s string) error {
+func New(s string, withCaller bool) error {
 	err := String(s)
 	if AlwaysWithCaller {
 		return err.WithFrame(2)
@@ -24,7 +24,7 @@ func (e String) WithFrame(skip int) error {
 }
 
 func (e String) Is(o error) bool {
-	return e.Error() == string(e)
+	return o.Error() == string(e)
 }
 
 func Wrap(err error, skip int) error {
@@ -39,7 +39,7 @@ type wrapped struct {
 
 func (e *wrapped) Error() string {
 	if WrappedErrorTextIncludesFrameInfo {
-		return fmt.Sprintf("%s: %v", e.fr.String(), e.err)
+		return fmt.Sprintf("%s: %s", e.fr.String(), e.err)
 	}
 	return e.err.Error()
 }
@@ -63,8 +63,7 @@ func (e *wrapped) Is(target error) bool {
 func (e *wrapped) Frame() *Frame { return e.fr }
 
 type JSONError struct {
-	wrapped `json:"-"`
-
+	wrapped
 	Err  string `json:"error,omitempty"`
 	Func string `json:"func,omitempty"`
 	File string `json:"file,omitempty"`
